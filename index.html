@@ -1,0 +1,123 @@
+<!doctype html>
+
+<html lang="nl">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Beterstelling</title>
+    <meta name="description" content="Beterstelling">
+    <meta name="author" content="ikbentim">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue@next"></script>
+
+  </head>
+
+  <body>
+    <div id="app">
+      <nav class="nav nav-pills mt-1 mx-3 mb-3">
+	<a class="nav-link" href="#" @click="order = true" :class="{active: order}">Nieuwe bestelling</a>
+	<a class="nav-link" href="#" @click="order = false" :class="{active: !order}">Bestellingen</a>
+      </nav>
+      <main>
+	<div class="container-fluid" v-show="order">
+	  <form>
+	    <div class="align-items-center input-group-lg col-12 mb-3">
+	      <label for="name" class="form-label col-3">Naam</label>
+	      <input type="text" class="form-control" id="name" v-model="name">
+	    </div>
+	    <div v-for="item in items">
+	      <div class="input-group align-items-center input-group-lg mb-3">
+		<button class="btn btn-outline-secondary col-2" type="button" @click="item.amount--">-</button>
+		<span class="input-group-text col-6">{{ item.desc }}</span>
+		<input type="text" class="form-control" v-model="item.amount" readonly>
+		<button class="btn btn-outline-secondary col-2" type="button" @click="item.amount++">+</button>
+	      </div>
+	    </div>
+	      <button class="btn btn-primary col m-1" type="button" @click="addOrder">Sla op</button>
+	      <button class="btn btn-primary col m-1" type="button" @click="clearForm">Reset</button>
+	  </form>
+	</div>
+	<div class="container-fluid" v-show="!order" v-for="(singleOrder, index) in orderList">
+	  <div class="card mx-3 my-2">
+	    <h5 class="card-header">{{ singleOrder.name }}</h5>
+	    <ul class="list-group list-group-flush" v-for="item in singleOrder.items">
+	      <li class="list-group-item">{{ item.amount }}x {{ item.desc }}</li>
+	    </ul>
+	    <a href="#" class="btn btn-outline-primary" @click="deleteOrder(index)">Verwijder</a>
+	  </div>
+	</div>
+      </main>
+    </div>
+    <script>
+      var app = Vue.createApp({
+	  data() {
+	      return {
+		  order: true,
+		  items: [
+		      {desc: "Bier", amount: 0},
+		      {desc: "Pitcher", amount: 0},
+		      {desc: "Meter", amount: 0},
+		      {desc: "Jillz", amount: 0},
+		      {desc: "VoSo", amount: 0},
+		      {desc: "Radler", amount: 0},
+		      {desc: "Apple Bandit", amount: 0},
+		      {desc: "Brand speciaal", amount: 0},
+		      {desc: "Desperados", amount: 0},
+		      {desc: "SoCo", amount: 0},
+		      {desc: "SoSi", amount: 0},
+		      {desc: "Flugel", amount: 0},
+		      {desc: "0.0% bier", amount: 0},
+		      {desc: "0.0% Radler", amount: 0},
+		      {desc: "0.0% Wiekse", amount: 0},
+		      {desc: "Cola", amount: 0},
+		      {desc: "Ice Tea", amount: 0},
+		      {desc: "Ice Tea green", amount: 0},
+		      {desc: "Snutzer", amount: 0},
+		      {desc: "Chips", amount: 0},
+		  ],
+		  name: "",
+		  orderList: []
+	      }
+	  },
+	  mounted() {
+	      if (localStorage.getItem('orderList')) {
+		  try {
+		      this.orderList = JSON.parse(localStorage.getItem('orderList'));
+		  } catch(e) {
+		      localStorage.removeItem('orderList');
+		  }
+	      }
+	  },
+	  methods: {
+	      clearForm() {
+		  this.name = "";
+		  this.items.forEach(item => item.amount = 0);
+	      },
+	      saveOrderList() {
+		  const parsed = JSON.stringify(this.orderList);
+		  localStorage.setItem('orderList', parsed);
+	      },
+	      addOrder() {
+		  var newOrder = {
+		      name: this.name,
+		      items: JSON.parse(JSON.stringify(this.items.filter(item => item.amount > 0)))
+		  };
+		  this.orderList.push(newOrder);
+		  this.clearForm();
+		  this.saveOrderList();
+	      },
+	      deleteOrder(index) {
+		  this.orderList.splice(index, 1);
+		  this.saveOrderList();
+	      }
+	  }
+      })
+      app.mount('#app')
+    </script>
+  </body>
+</html>
