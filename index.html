@@ -38,8 +38,10 @@
 		<button class="btn btn-outline-secondary col-2" type="button" @click="item.amount++">+</button>
 	      </div>
 	    </div>
-	      <button class="btn btn-primary col m-1 mb-4" type="button" @click="addOrder">Sla op</button>
-	      <button class="btn btn-outline-primary col m-1 mb-4" type="button" @click="clearForm">Reset</button>
+	    <div class="d-flex justify-content-around">
+	      <button class="btn btn-primary col-5 m-1 mb-4" type="button" @click="addOrder">Sla op</button>
+	      <button class="btn btn-outline-primary col-5 m-1 mb-4" type="button" @click="clearForm">Reset</button>
+	    </div>
 	  </form>
 	</div>
 	<div class="container-fluid" v-show="!order" v-for="(singleOrder, index) in orderList">
